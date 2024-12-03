@@ -1,3 +1,5 @@
+import sys
+
 # Global Variables
 instruction_Cache = []  # Cache structure for instructions
 data_Cache = []  # Cache structure for data
@@ -13,14 +15,17 @@ cache_Config = {
 
 
 def initialize_Caches(total_Size, line_Size, access_Time, memory_Access_Time):
+
     global instruction_Cache, data_Cache, cache_Config
 
+    # Validate and set cache configuration
     cache_Config['total_Size'] = total_Size
     cache_Config['line_Size'] = line_Size
     cache_Config['access_Time'] = access_Time
     cache_Config['memory_Access_Time'] = memory_Access_Time
     cache_Config['num_Lines'] = total_Size // line_Size
 
+    # Initialize instruction and data caches with default values (valid=0, tag=None)
     instruction_Cache = [{'valid': 0, 'tag': None} for _ in range(cache_Config['num_Lines'])]
     data_Cache = [{'valid': 0, 'tag': None} for _ in range(cache_Config['num_Lines'])]
 
@@ -28,12 +33,14 @@ def initialize_Caches(total_Size, line_Size, access_Time, memory_Access_Time):
 
 
 def access_Cache(address, cache, stats):
-
+  
+    # Calculate cache index and tag
     line_Size = cache_Config['line_Size']
     num_Lines = cache_Config['num_Lines']
     index = (address // line_Size) % num_Lines
     tag = address // (line_Size * num_Lines)
 
+    # Access cache line
     cache_Line = cache[index]
     stats['accesses'] += 1
 
@@ -61,7 +68,9 @@ def calculate_AMAT(stats):
 
 
 def simulate_Access_Sequences(instruction_Sequence, data_Sequence):
-
+    """
+    Simulate separate instruction and data cache accesses.
+    """
     print("Starting separate cache simulation...\n")
 
     # Simulate instruction cache accesses
@@ -105,10 +114,43 @@ def simulate_Access_Sequences(instruction_Sequence, data_Sequence):
     print(f"  Average Memory Access Time (AMAT): {data_AMAT:.2f} cycles")
 
 
-# Cache Config: 256 bytes total per cache, 16 bytes per line, 1 cycle access time, 100 cycles memory time
-initialize_Caches(total_Size=256, line_Size=16, access_Time=1, memory_Access_Time=100)
+def run_Program():
+    """
+    Terminal-based program for running test cases.
+    """
+    while True:
+        print("\nCache Simulator Test Cases")
+        print("==========================")
+        print("1. Test Case 1: Unique Addresses (No Hits)")
+        print("2. Test Case 2: Repeated Addresses (High Hit Ratio)")
+        print("3. Test Case 3: Mixed Access Pattern")
+        print("4. Exit")
+        choice = input("Select a test case (1-4): ").strip()
 
-# Example Access Sequences
-instruction_Sequence = [0, 16, 32, 48, 64, 128, 256]
-data_Sequence = [8, 24, 40, 56, 72, 136, 264]
-simulate_Access_Sequences(instruction_Sequence, data_Sequence)
+        if choice == "1":
+            # Test Case 1: Unique Addresses
+            initialize_Caches(total_Size=256, line_Size=16, access_Time=1, memory_Access_Time=100)
+            instruction_Sequence = [0, 16, 32, 48, 64, 128, 256]
+            data_Sequence = [8, 24, 40, 56, 72, 136, 264]
+            simulate_Access_Sequences(instruction_Sequence, data_Sequence)
+        elif choice == "2":
+            # Test Case 2: Repeated Addresses
+            initialize_Caches(total_Size=256, line_Size=16, access_Time=1, memory_Access_Time=100)
+            instruction_Sequence = [0, 16, 32, 0, 16, 32, 0, 16, 32]
+            data_Sequence = [8, 24, 40, 8, 24, 40, 8, 24, 40]
+            simulate_Access_Sequences(instruction_Sequence, data_Sequence)
+        elif choice == "3":
+            # Test Case 3: Mixed Access Pattern
+            initialize_Caches(total_Size=256, line_Size=16, access_Time=1, memory_Access_Time=100)
+            instruction_Sequence = [0, 16, 32, 48, 0, 64, 16, 128, 256]
+            data_Sequence = [8, 24, 40, 56, 8, 72, 24, 136, 264]
+            simulate_Access_Sequences(instruction_Sequence, data_Sequence)
+        elif choice == "4":
+            print("Exiting...")
+            sys.exit(0)
+        else:
+            print("Invalid choice. Please select a valid test case (1-4).")
+
+
+if __name__ == "__main__":
+    run_Program()
