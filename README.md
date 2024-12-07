@@ -28,8 +28,3 @@ Users can load memory access sequences through the GUI or provide them in the co
   - `tkinter` (for GUI)
   - `os` (for file handling)
 
-## Installation
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/username/cache-simulator.git
-   cd cache-simulator
