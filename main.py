@@ -126,9 +126,7 @@ def print_Final_Stats():
 
 
 def simulate_Access_Sequences(instruction_Sequence, data_Sequence):
-    """
-    Simulate separate instruction and data cache accesses.
-    """
+
 
     print("\nStarting Simulation...\n")
 
@@ -147,9 +145,7 @@ def simulate_Access_Sequences(instruction_Sequence, data_Sequence):
 
 
 def read_sequence_from_file(filename):
-    """
-    Reads a comma-separated list of addresses from a file and returns them as a list of integers.
-    """
+
     if not os.path.isfile(filename):
         print(f"File {filename} does not exist.")
         return []
@@ -184,9 +180,6 @@ def get_valid_int(prompt, valid_range=None, positive_only=False):
 
 
 def run_Program():
-    """
-    Terminal-based program for running test cases or loading from files.
-    """
 
     # Prompt user for basic configuration with validation
     print("Welcome to the Cache Simulator!\n")
