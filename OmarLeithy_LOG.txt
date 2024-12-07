@@ -1,0 +1,6 @@
+December 4th 3:00 pm:
+Designed the GUI
+December 5th 7:30 pm:
+Modified the backend code to connect it with the GUI and successfully integrated them.
+December 7th 6:00 pm:
+Perforemd some debugging in the GUI and the backend to fix some known bugs.
