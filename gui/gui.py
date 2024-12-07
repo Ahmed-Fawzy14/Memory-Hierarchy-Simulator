@@ -96,6 +96,7 @@ params = {
     "Line Size": IntVar(value=0),
     "Access Time": IntVar(value=0),
     "Memory Access Time": IntVar(value=0),
+    "Byte Size": IntVar(value=1),
 }
 
 for idx, (label_text, var) in enumerate(params.items()):
