@@ -68,9 +68,7 @@ def calculate_AMAT(stats):
 
 
 def simulate_Access_Sequences(instruction_Sequence, data_Sequence):
-    """
-    Simulate separate instruction and data cache accesses.
-    """
+
     print("Starting separate cache simulation...\n")
 
     # Simulate instruction cache accesses
@@ -115,9 +113,7 @@ def simulate_Access_Sequences(instruction_Sequence, data_Sequence):
 
 
 def run_Program():
-    """
-    Terminal-based program for running test cases.
-    """
+
     while True:
         print("\nCache Simulator Test Cases")
         print("==========================")
