@@ -1,0 +1,41 @@
+Nov 27, 2:10PM:
+- Read the project specifications and discussed initial design choices with the team.
+- Set up the development environment and GitHub repo.
+- Sketched a rough outline of the code structure for backend logic.
+
+Nov 28, 11:30AM:
+- Implemented initial memory and cache configuration parsing.
+- Set up global variables for cache parameters (total size, line size, access times).
+- Encountered a bug with index/tag calculation; corrected the logic for computing tag = address // (lineSize * numLines) and index = (address // lineSize) % numLines.
+
+Nov 29, 3:45PM:
+- Implemented direct-mapped cache structure with arrays holding valid/tag fields.
+- Added the access_Cache function to track hits, misses, and total accesses.
+- Found a bug: misses didn’t increment because the cache line wasn’t updated properly after a miss. Fixed by setting valid=1 and updating tag on a miss.
+
+Nov 30, 1:55PM:
+- Integrated basic console-based simulation loop.
+- Implemented per-access and final summary printouts (hits, misses, AMAT).
+- Fixed AMAT calculation to use float division. Addressed a small issue where integer division returned zero.
+
+Dec 2, 4:20PM:
+- Implemented separate instruction and data caches (bonus feature).
+- Initially both sequences were processed by the same cache due to a minor oversight. Corrected by passing the correct cache and stats references.
+- Confirmed independent tracking of hits and misses in instruction and data caches.
+- Added error handling for invalid or missing input files.
+
+Dec 3, 2:30PM:
+- Did some tests with various input sizes and validated hit/miss ratios.
+- Found an indexing bug for very large addresses (close to max address_Bits). Adjusted to handle large integers properly.
+
+Dec 4, 9:45PM:
+- Refactored code for clarity and modularity.
+- Added multiple test patterns (unique, repeated, mixed) in the console menu.
+- Detected a subtle AMAT calculation bug. Corrected formula to: AMAT = CacheAccessTime + (MissRatio * MemoryAccessTime).
+
+Dec 5, 8:20PM:
+- Final code cleanup and commenting.
+- Prepared PDF report with screenshots and step-by-step simulation examples.
+
+Dec 6, 11:00AM:
+- Performed a final verification run with various sequences.
