@@ -1,0 +1,13 @@
+Dec 5, 2024:
+
+GUI Modifications:
+Implemented buttons for step-by-step execution: Added buttons for controlling the simulation flow, allowing users to step through cache accesses one by one.
+File dialog for program loading: Integrated a file loading dialog to allow users to load program files directly from the GUI. This required backend modifications to properly initialize the memory based on the loaded program.
+Interactive Controls: Enabled controls for users to input memory access sequences, facilitating real-time simulation of the memory and cache behavior.
+
+
+Supporting Separate Caches for Instructions and Data:
+Dec 7, 2024:
+
+Other Contributions:
+Documentation: Contributed to the overall project report, providing detailed sections on the design and implementation of the simulator, including the integration of the GUI and cache handling features.
