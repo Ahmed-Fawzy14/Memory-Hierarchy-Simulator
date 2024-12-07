@@ -4,7 +4,7 @@ Nov 27, 2:10PM:
 - Sketched a rough outline of the code structure for backend logic.
 
 Nov 28, 11:30AM:
-- Implemented initial memory and cache configuration parsing.
+- Implemented initial memory and cache configuration parsing. (initialize_Caches, access_Cache)
 - Set up global variables for cache parameters (total size, line size, access times).
 - Encountered a bug with index/tag calculation; corrected the logic for computing tag = address // (lineSize * numLines) and index = (address // lineSize) % numLines.
 
@@ -27,11 +27,13 @@ Dec 2, 4:20PM:
 Dec 3, 2:30PM:
 - Did some tests with various input sizes and validated hit/miss ratios.
 - Found an indexing bug for very large addresses (close to max address_Bits). Adjusted to handle large integers properly.
+- Added read_sequence_from_file.
 
 Dec 4, 9:45PM:
 - Refactored code for clarity and modularity.
 - Added multiple test patterns (unique, repeated, mixed) in the console menu.
 - Detected a subtle AMAT calculation bug. Corrected formula to: AMAT = CacheAccessTime + (MissRatio * MemoryAccessTime).
+- Made printing after each hit/miss.
 
 Dec 5, 8:20PM:
 - Final code cleanup and commenting.
