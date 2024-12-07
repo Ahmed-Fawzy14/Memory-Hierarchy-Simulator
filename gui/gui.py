@@ -20,9 +20,21 @@ def validate_addresses(addresses, format_type):
                 raise ValueError(f"Invalid decimal address: {addr}")
     elif format_type == "binary":
         for addr in address_list:
-            if not all(char in "01" for char in addr):
+            if not all(char in "01" for char in addr):  # Validate binary format
                 raise ValueError(f"Invalid binary address: {addr}")
     return address_list
+
+def preprocess_addresses(addresses, format_type):
+    """
+    Validates and converts addresses to integers based on the format type (binary or decimal).
+    """
+    address_list = validate_addresses(addresses, format_type)
+    if format_type == "binary":
+        # Convert binary strings to integers
+        return [int(addr, 2) for addr in address_list]
+    # Convert decimal strings to integers
+    return [int(addr) for addr in address_list]
+
 
 root = Tk()
 root.title("Memory Hierarchy Simulator")
@@ -107,7 +119,6 @@ for idx, (label_text, var) in enumerate(params.items()):
     entry = Entry(frame, textvariable=var, font=("Courier", 12), width=10)
     entry.pack()
 
-# Simulation Button and Results Window
 def simulate():
     try:
         dataAddresses = dataBox.get("1.0", END).strip()
@@ -117,8 +128,8 @@ def simulate():
             raise ValueError("Data or instruction addresses cannot be empty.")
 
         format_type = address_format.get()
-        dataAddresses = validate_addresses(dataAddresses, format_type)
-        instructionAddresses = validate_addresses(instructionAddresses, format_type)
+        dataAddresses = preprocess_addresses(dataAddresses, format_type)
+        instructionAddresses = preprocess_addresses(instructionAddresses, format_type)
 
         for key, value in params.items():
             if value.get() <= 0:
@@ -129,7 +140,6 @@ def simulate():
         accessTime = params["Access Time"].get()
         memoryAccessTime = params["Memory Access Time"].get()
 
-        # Create results window
         sim_window = Toplevel(root)
         sim_window.title("Simulation Results")
         sim_window.geometry("600x400")
@@ -141,12 +151,10 @@ def simulate():
         sim_output.config(yscrollcommand=scrollbar.set)
 
         def output_to_gui(*args):
-            text = " ".join(str(arg) for arg in args)  # Join multiple arguments as a single string
-            sim_output.insert(END, text + "\n")
-            sim_output.yview_moveto(0)  # Scroll to the top after each insert
+            sim_output.insert(END, " ".join(map(str, args)) + "\n")
+            sim_output.yview_moveto(1)
 
-        # Run the backend function
-        run_Program(totalSize, lineSize, accessTime, memoryAccessTime, ",".join(instructionAddresses), ",".join(dataAddresses), output_to_gui)
+        run_Program(totalSize, lineSize, accessTime, memoryAccessTime, instructionAddresses, dataAddresses, output_to_gui, format_type)
 
     except Exception as e:
         messagebox.showerror("Simulation Error", str(e))
