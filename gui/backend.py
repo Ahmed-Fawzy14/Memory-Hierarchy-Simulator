@@ -84,50 +84,68 @@ def simulate_Access_Sequences(instruction_Sequence, data_Sequence):
 
     output("Starting separate cache simulation...\n")
 
-    # Simulate instruction cache accesses
-    output("Instruction Cache Accesses:")
-    for address in instruction_Sequence:
-        index, tag, result = access_Cache(address, instruction_Cache, instruction_Cache_Stats)
-        output(f"Instruction Address: {address}, Index: {index}, Tag: {tag}, Result: {result}")
+    # Simulate instruction cache accesses if sequence is non-empty
+    if instruction_Sequence:
+        output("Instruction Cache Accesses:")
+        for address in instruction_Sequence:
+            index, tag, result = access_Cache(address, instruction_Cache, instruction_Cache_Stats)
+            output(f"Instruction Address: {address}, Index: {index}, Tag: {tag}, Result: {result}")
+    else:
+        output("No instruction addresses to simulate.")
 
-    # Simulate data cache accesses
-    output("\nData Cache Accesses:")
-    for address in data_Sequence:
-        index, tag, result = access_Cache(address, data_Cache, data_Cache_Stats)
-        output(f"Data Address: {address}, Index: {index}, Tag: {tag}, Result: {result}")
+    # Simulate data cache accesses if sequence is non-empty
+    if data_Sequence:
+        output("\nData Cache Accesses:")
+        for address in data_Sequence:
+            index, tag, result = access_Cache(address, data_Cache, data_Cache_Stats)
+            output(f"Data Address: {address}, Index: {index}, Tag: {tag}, Result: {result}")
+    else:
+        output("\nNo data addresses to simulate.")
 
     # Final statistics for instruction cache
-    instr_Hit_Ratio = instruction_Cache_Stats['hits'] / instruction_Cache_Stats['accesses']
-    instr_Miss_Ratio = instruction_Cache_Stats['misses'] / instruction_Cache_Stats['accesses']
-    instr_AMAT = calculate_AMAT(instruction_Cache_Stats)
+    if instruction_Sequence:
+        instr_Hit_Ratio = instruction_Cache_Stats['hits'] / instruction_Cache_Stats['accesses']
+        instr_Miss_Ratio = instruction_Cache_Stats['misses'] / instruction_Cache_Stats['accesses']
+        instr_AMAT = calculate_AMAT(instruction_Cache_Stats)
+
+        output("\nInstruction Cache:")
+        output(f"  Total Accesses: {instruction_Cache_Stats['accesses']}")
+        output(f"  Total Hits: {instruction_Cache_Stats['hits']}")
+        output(f"  Total Misses: {instruction_Cache_Stats['misses']}")
+        output(f"  Hit Ratio: {instr_Hit_Ratio:.2f}")
+        output(f"  Miss Ratio: {instr_Miss_Ratio:.2f}")
+        output(f"  Average Memory Access Time (AMAT): {instr_AMAT:.2f} cycles")
 
     # Final statistics for data cache
-    data_Hit_Ratio = data_Cache_Stats['hits'] / data_Cache_Stats['accesses']
-    data_Miss_Ratio = data_Cache_Stats['misses'] / data_Cache_Stats['accesses']
-    data_AMAT = calculate_AMAT(data_Cache_Stats)
+    if data_Sequence:
+        data_Hit_Ratio = data_Cache_Stats['hits'] / data_Cache_Stats['accesses']
+        data_Miss_Ratio = data_Cache_Stats['misses'] / data_Cache_Stats['accesses']
+        data_AMAT = calculate_AMAT(data_Cache_Stats)
 
-    # output final results
-    output("\nSimulation Results:")
-    output("Instruction Cache:")
-    output(f"  Total Accesses: {instruction_Cache_Stats['accesses']}")
-    output(f"  Total Hits: {instruction_Cache_Stats['hits']}")
-    output(f"  Total Misses: {instruction_Cache_Stats['misses']}")
-    output(f"  Hit Ratio: {instr_Hit_Ratio:.2f}")
-    output(f"  Miss Ratio: {instr_Miss_Ratio:.2f}")
-    output(f"  Average Memory Access Time (AMAT): {instr_AMAT:.2f} cycles")
-
-    output("\nData Cache:")
-    output(f"  Total Accesses: {data_Cache_Stats['accesses']}")
-    output(f"  Total Hits: {data_Cache_Stats['hits']}")
-    output(f"  Total Misses: {data_Cache_Stats['misses']}")
-    output(f"  Hit Ratio: {data_Hit_Ratio:.2f}")
-    output(f"  Miss Ratio: {data_Miss_Ratio:.2f}")
-    output(f"  Average Memory Access Time (AMAT): {data_AMAT:.2f} cycles")
+        output("\nData Cache:")
+        output(f"  Total Accesses: {data_Cache_Stats['accesses']}")
+        output(f"  Total Hits: {data_Cache_Stats['hits']}")
+        output(f"  Total Misses: {data_Cache_Stats['misses']}")
+        output(f"  Hit Ratio: {data_Hit_Ratio:.2f}")
+        output(f"  Miss Ratio: {data_Miss_Ratio:.2f}")
+        output(f"  Average Memory Access Time (AMAT): {data_AMAT:.2f} cycles")
 
 
 
 def run_Program(total_Size, line_Size, access_Time, memory_Access_Time, instruction_Sequence, data_Sequence, output_to_gui):
     global output
     output = output_to_gui
+    global instruction_Cache, data_Cache, instruction_Cache_Stats, data_Cache_Stats, cache_Config
+    instruction_Cache = []  # Cache structure for instructions
+    data_Cache = []  # Cache structure for data
+    instruction_Cache_Stats = {'accesses': 0, 'hits': 0, 'misses': 0}  # Statistics for instruction cache
+    data_Cache_Stats = {'accesses': 0, 'hits': 0, 'misses': 0}  # Statistics for data cache
+    cache_Config = {
+        'total_Size': 0,  # Cache size (in bytes per cache)
+        'line_Size': 0,  # Line size (in bytes)
+        'access_Time': 0,  # Cache access time (in cycles)
+        'memory_Access_Time': 0,  # Memory access time (in cycles)
+        'num_Lines': 0,  # Total number of lines in each cache
+    }  # Cache configuration
     initialize_Caches(total_Size, line_Size, access_Time, memory_Access_Time)
     simulate_Access_Sequences(instruction_Sequence, data_Sequence)
