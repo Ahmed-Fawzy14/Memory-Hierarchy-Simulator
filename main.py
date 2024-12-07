@@ -35,7 +35,7 @@ def initialize_Caches(total_Size, line_Size, access_Time, memory_Access_Time, ad
     instruction_Cache = [{'valid': 0, 'tag': None} for _ in range(cache_Config['num_Lines'])]
     data_Cache = [{'valid': 0, 'tag': None} for _ in range(cache_Config['num_Lines'])]
 
-    print(f"\nCaches initialized with {cache_Config['num_Lines']} lines each.")
+    print(f"\nInstruction and Data Caches initialized with {cache_Config['num_Lines']} lines each.")
     print(f"Memory Address Bits: {address_Bits}, Memory Access Time: {memory_Access_Time} cycles")
     print(f"Cache Size: {total_Size} bytes, Line Size: {line_Size} bytes, Cache Access Time: {access_Time} cycles\n")
 
@@ -62,7 +62,6 @@ def access_Cache(address, cache, stats):
         cache_Line['tag'] = tag
         result = "MISS"
 
-    # Print after each access: index, tag, result, cumulative stats
     print(f"Address: {address}, Index: {index}, Tag: {tag}, Result: {result}")
     print(f"  Total Accesses: {stats['accesses']}, Hits: {stats['hits']}, Misses: {stats['misses']}\n")
 
@@ -126,9 +125,7 @@ def print_Final_Stats():
 
 
 def simulate_Access_Sequences(instruction_Sequence, data_Sequence):
-
-
-    print("\nStarting Simulation...\n")
+    print("\nStarting separate cache simulation...\n")
 
     # Simulate instruction cache accesses
     print("Instruction Cache Accesses:")
@@ -144,8 +141,15 @@ def simulate_Access_Sequences(instruction_Sequence, data_Sequence):
     print_Final_Stats()
 
 
-def read_sequence_from_file(filename):
+def is_binary_string(s):
+    return all(c in '01' for c in s)
 
+
+def read_sequence_from_file(filename, address_Bits):
+    """
+    Reads a comma-separated list of addresses from a file and returns them as a list of integers.
+    Handles both binary and decimal addresses.
+    """
     if not os.path.isfile(filename):
         print(f"File {filename} does not exist.")
         return []
@@ -154,8 +158,33 @@ def read_sequence_from_file(filename):
         content = f.read().strip()
     if not content:
         return []
-    # Split by comma and convert to integers
-    return [int(x.strip()) for x in content.split(',') if x.strip().isdigit()]
+
+    addresses = []
+    for addr_str in content.split(','):
+        addr_str = addr_str.strip()
+        if not addr_str:
+            continue
+
+        # Check if binary
+        if is_binary_string(addr_str):
+            # Convert from binary
+            val = int(addr_str, 2)
+            if val >= 2**address_Bits:
+                print(f"Address {addr_str} exceeds the allowed address bits ({address_Bits}).")
+                continue
+            addresses.append(val)
+        else:
+            # Decimal
+            if addr_str.isdigit():
+                val = int(addr_str)
+                if val >= 2**address_Bits:
+                    print(f"Address {val} exceeds the allowed address bits ({address_Bits}).")
+                    continue
+                addresses.append(val)
+            else:
+                print(f"Ignoring invalid address: {addr_str}")
+
+    return addresses
 
 
 def get_valid_int(prompt, valid_range=None, positive_only=False):
@@ -180,14 +209,24 @@ def get_valid_int(prompt, valid_range=None, positive_only=False):
 
 
 def run_Program():
+    """
+    Terminal-based program for running test cases or loading from files.
+    According to the PDF, the inputs must match exactly these names:
+    1. The number of bits needed to address the memory (an integer between 16 and 40)
+    2. The memory access time in cycles (an integer between 50 and 200)
+    3. The total cache size S (in bytes)
+    4. The cache line size L (in bytes)
+    5. The number of cycles needed to access the cache (an integer between 1 and 10 clock cycles)
+    """
 
-    # Prompt user for basic configuration with validation
     print("Welcome to the Cache Simulator!\n")
-    address_Bits = get_valid_int("Enter the number of bits for memory addressing (16 to 40): ", (16, 40))
-    memory_Access_Time = get_valid_int("Enter the memory access time in cycles (50 to 200): ", (50, 200))
-    total_Size = get_valid_int("Enter the total cache size in bytes (positive integer): ", positive_only=True)
-    line_Size = get_valid_int("Enter the line size in bytes (positive integer): ", positive_only=True)
-    cache_Access_Time = get_valid_int("Enter the cache access time in cycles (1 to 10): ", (1, 10))
+
+    # Matching exactly the PDF wording:
+    address_Bits = get_valid_int("The number of bits needed to address the memory (an integer between 16 and 40): ", (16, 40))
+    memory_Access_Time = get_valid_int("The memory access time in cycles (an integer between 50 and 200): ", (50, 200))
+    total_Size = get_valid_int("The total cache size S (in bytes): ", positive_only=True)
+    line_Size = get_valid_int("The cache line size L (in bytes): ", positive_only=True)
+    cache_Access_Time = get_valid_int("The number of cycles needed to access the cache (an integer between 1 and 10 clock cycles): ", (1, 10))
 
     initialize_Caches(total_Size, line_Size, cache_Access_Time, memory_Access_Time, address_Bits)
 
@@ -217,15 +256,14 @@ def run_Program():
             data_Sequence = [8, 24, 40, 56, 8, 72, 24, 136, 264]
             simulate_Access_Sequences(instruction_Sequence, data_Sequence)
         elif choice == "4":
-            # Load from files
             instruction_File = input("Enter the instruction addresses file name: ").strip()
             data_File = input("Enter the data addresses file name: ").strip()
 
-            instruction_Sequence = read_sequence_from_file(instruction_File)
-            data_Sequence = read_sequence_from_file(data_File)
+            instruction_Sequence = read_sequence_from_file(instruction_File, address_Bits)
+            data_Sequence = read_sequence_from_file(data_File, address_Bits)
 
             if not instruction_Sequence or not data_Sequence:
-                print("Could not load sequences from file(s). Ensure files exist and have valid comma-separated integers.")
+                print("Could not load sequences from file(s). Ensure files exist and have valid comma-separated addresses.")
             else:
                 initialize_Caches(total_Size, line_Size, cache_Access_Time, memory_Access_Time, address_Bits)
                 simulate_Access_Sequences(instruction_Sequence, data_Sequence)
